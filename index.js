@@ -186,11 +186,7 @@ app.post("/register-domain", async (req, res) => {
   const response = await registerDomain(domain, customer_id, plan_id);
 
   // domainRegisterResult = await response.json();
-  console.log(
-    "===========> register status and error ",
-    response.status,
-    response.error
-  );
+  console.log("===========> register status and error ", response);
   res.json(response);
 });
 

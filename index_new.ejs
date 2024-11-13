@@ -1009,16 +1009,26 @@
               break;
           }
           selectedEmailPrice = selectedEmailPrice.toFixed(2);
-          summaryItems.innerHTML = `
-                            <div class="summary-item">
-                                <span>www.${selectedDomainName}</span>
-                                <span>£${selectedDomainPrice}</span>
-                            </div>
-                            <div class="summary-item">
-                                <span>${selectedEmailPlanString}</span>
-                                <span>£${selectedEmailPrice}</span>
-                            </div>
-                        `;
+          let items = [];
+
+          if (selectedDomainPrice != 0) {
+            items.push(`
+              <div class="summary-item">
+                <span>www.${selectedDomainName}</span>
+                <span>£${selectedDomainPrice}</span>
+              </div>`);
+          }
+
+          if (selectedEmailPrice != 0) {
+            items.push(`
+              <div class="summary-item">
+                <span>${selectedEmailPlanString}</span>
+                <span>£${selectedEmailPrice}</span>
+              </div>`);
+          }
+
+          summaryItems.innerHTML = items.join("");
+
           grandTotal =
             parseFloat(selectedDomainPrice) +
             parseFloat(selectedEmailPrice) +
