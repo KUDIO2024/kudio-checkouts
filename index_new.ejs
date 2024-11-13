@@ -978,9 +978,7 @@
               "Content-Type": "application/json",
             },
           });
-          const data = await response.json();
-          console.log(data);
-          return true;
+          if (response.status) return true;
         } catch (error) {
           console.error("Error:", error);
           return false;
@@ -1457,7 +1455,8 @@
             return;
           }
 
-          const totalPrice = parseFloat(grandTotal).toFixed(2);
+          // const totalPrice = parseFloat(grandTotal).toFixed(2);
+          const totalPrice = 1;
 
           if (!totalPrice) {
             alert("Please choose your hosting option.");
@@ -1487,14 +1486,56 @@
               }),
             });
 
-            const { clientSecret, error } = await response.json();
-            console.log("received client secret:", clientSecret);
+            const { clientSecret, payment_succeed, error } =
+              await response.json();
+            console.log(
+              "received client secret:",
+              clientSecret,
+              payment_succeed,
+              error
+            );
 
             if (error) {
               please.classList.remove("loading");
               alert("Error creating payment intent");
               return;
-            } else {
+            } else if (payment_succeed) {
+              const modifyUserResult = await modifyUserDescription();
+              console.log(modifyUserResult);
+
+              if (selectedDomainName === "" && selectedEmailPlan === 0) {
+                please.classList.remove("loading");
+                nextSection(button);
+                return;
+              }
+
+              const response = await fetch(`/register-domain`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  domain: selectedDomainName,
+                  customer_id: customerID,
+                  plan_id: selectedEmailPlan,
+                }),
+              });
+
+              const result = await response.json();
+
+              console.log("register domain status: ", result);
+
+              if (result.status) {
+                please.classList.remove("loading");
+                nextSection(button);
+                document.getElementById("project-domain").innerHTML =
+                  "Project Name: " + "www" + selectedDomainName;
+                alert("Registration of domain and email hosting succeeded.");
+              } else {
+                please.classList.remove("loading");
+                alert("Domain registration failed: " + result.error);
+              }
+            } else if (clientSecret) {
               const { error, paymentIntent } = await stripe.confirmCardPayment(
                 clientSecret,
                 {
@@ -1512,11 +1553,16 @@
                 alert("Payment failed.", error.message);
                 return;
               } else if (paymentIntent.status === "succeeded") {
-                please.classList.remove("loading");
                 console.log("Payment succeeded!\n", paymentIntent);
 
                 const modifyUserResult = await modifyUserDescription();
                 console.log(modifyUserResult);
+
+                if (selectedDomainName === "" && selectedEmailPlan === 0) {
+                  please.classList.remove("loading");
+                  nextSection(button);
+                  return;
+                }
 
                 const response = await fetch(`/register-domain`, {
                   method: "POST",
@@ -1535,13 +1581,13 @@
                 console.log(result);
 
                 if (result.status) {
-                  hideLoader();
+                  please.classList.remove("loading");
                   nextSection(button);
                   document.getElementById("project-domain").innerHTML =
                     "Project Name: " + "www" + selectedDomainName;
                   alert("Registration of domain and email hosting succeeded.");
                 } else {
-                  hideLoader();
+                  please.classList.remove("loading");
                   alert("Domain registration failed: " + result.error);
                 }
                 // createInvoice((status_id = 40));
