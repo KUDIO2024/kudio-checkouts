@@ -1465,8 +1465,8 @@
             return;
           }
 
-          // const totalPrice = parseFloat(grandTotal).toFixed(2);
-          const totalPrice = 1;
+          const totalPrice = parseFloat(grandTotal).toFixed(2);
+          // const totalPrice = 1;
 
           if (!totalPrice) {
             alert("Please choose your hosting option.");
@@ -1540,7 +1540,7 @@
                 nextSection(button);
                 document.getElementById("project-domain").innerHTML =
                   "Project Name: " + "www" + selectedDomainName;
-                alert("Registration of domain and email hosting succeeded.");
+                // alert("Registration of domain and email hosting succeeded.");
               } else {
                 please.classList.remove("loading");
                 alert("Domain registration failed: " + result.error);
@@ -1595,7 +1595,7 @@
                   nextSection(button);
                   document.getElementById("project-domain").innerHTML =
                     "Project Name: " + "www" + selectedDomainName;
-                  alert("Registration of domain and email hosting succeeded.");
+                  // alert("Registration of domain and email hosting succeeded.");
                 } else {
                   please.classList.remove("loading");
                   alert("Domain registration failed: " + result.error);
